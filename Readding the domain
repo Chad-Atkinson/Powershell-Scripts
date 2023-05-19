@@ -1,0 +1,40 @@
+#Adding a local user 
+
+$Password = Read-Host "Password" -AsSecureString
+New-LocalUser "ExtraSpace" -Password $Password 
+
+Add-LocalGroupMember -Group "Administrators" -Member "Test"
+
+#Checking DNS is .208 .209
+$FindDns = Get-NetIPConfiguration | Where-Object {$_.InterfaceDescription -like '*Ethernet*'} | Select-Object -ExpandProperty DNSServer | Select-Object -ExpandProperty ServerAddresses
+Echo $FindDns
+
+
+
+if ($FindDns -eq "8.8.8.8") {
+    Write-Host "Continuing with the script."
+} elseif ($FindDns -ne "8.8.8.8") {
+   $DNSCHANGE
+    
+}
+
+$Index = Get-NetIPConfiguration | Where-Object {$_.InterfaceDescription -like '*Ethernet*'} | Select-Object -ExpandProperty InterfaceIndex
+$DNSCHANGE = Set-DnsClientServerAddress -InterfaceIndex $Index -ServerAddresses 8.8.8.8, 8.8.4.4
+
+
+
+#Ping .208
+if(Test-Connection 8.8.8.8 -Count 1 -Quiet){
+    Write-Output "Connection to 8.8.8.8 successful, continuing script..."
+  #Unadding the Domain 
+$Credential = Get-Credential
+Add-Computer -WorkgroupName "TEST" -Credential $Credential
+
+#Adding the Domain 
+$Credential = Get-Credential
+Add-Computer -DomainName "Facdomain.local" -Credential $Credential 
+}
+else{
+    Write-Output "Connection to 8.8.8.8 failed, stopping script."
+    return
+} 
