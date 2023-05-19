@@ -1,0 +1,19 @@
+
+Set-ExecutionPolicy -ExecutionPolicy bypass
+
+
+$cred= [pscredential]::new($users, $pass)
+
+
+#Name the computer
+$s1= Read-Host "Name of the computer"
+Rename-Computer -NewName "$s1" -DomainCredential $cred
+
+#adding to group policy
+$s2= Read-Host "Name of employee to add to Admin"
+Add-LocalGroupMember -Group "Administrators" -Member "$s2"
+
+#removing regkey
+Remove-Itemproperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\00010002" -name "Functions"
+
+Restart-Computer -confirm
