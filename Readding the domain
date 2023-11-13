@@ -1,11 +1,11 @@
 #Adding a local user 
 
 $Password = Read-Host "Password" -AsSecureString
-New-LocalUser "ExtraSpace" -Password $Password 
+New-LocalUser "User" -Password $Password 
 
-Add-LocalGroupMember -Group "Administrators" -Member "Test"
+Add-LocalGroupMember -Group "Administrators" -Member "User"
 
-#Checking DNS is .208 .209
+#Checking DNS is .8 .4
 $FindDns = Get-NetIPConfiguration | Where-Object {$_.InterfaceDescription -like '*Ethernet*'} | Select-Object -ExpandProperty DNSServer | Select-Object -ExpandProperty ServerAddresses
 Echo $FindDns
 
@@ -32,7 +32,7 @@ Add-Computer -WorkgroupName "TEST" -Credential $Credential
 
 #Adding the Domain 
 $Credential = Get-Credential
-Add-Computer -DomainName "Facdomain.local" -Credential $Credential 
+Add-Computer -DomainName "Createddomainname " -Credential $Credential 
 }
 else{
     Write-Output "Connection to 8.8.8.8 failed, stopping script."
