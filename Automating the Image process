@@ -23,3 +23,61 @@ Set-ItemProperty -Path $TZAutoSettingRegPath -Name "Start" -Value 3
 
 # Restart the computer
 Restart-Computer -Confirm
+
+
+
+# In user account 
+
+
+#Running as admin 
+if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit }
+
+
+
+
+$hostname1 = $env:COMPUTERNAME.Replace("L-", "")
+
+
+
+##Chrome bookmarks 
+Copy-item -Path "D:\Laptop Builds\Downloads the scripts need\Default" -Destination "C:\Users\$hostname1\AppData\Local\Google\Chrome\User Data" -force
+##Updates 
+Install-Module -Name PSWindowsUpdate -Force
+##VPN
+Copy-Item -Path "D:\GlobalProtect64.msi" -Destination "C:\" -Recurse 
+Start-Process C:\GlobalProtect64.msi
+
+##Printers
+$Floor = read-host "Which floor 2-5"
+Switch ($Floor)
+{
+
+2{
+Add-Printer -ConnectionName "\\Print server\FL - Sharp MX-3640 - Copyroom"
+Add-Printer -ConnectionName "\\Print server\FL - Sharp MX-M623N - SouthWest"
+Add-Printer -ConnectionName "\\Print server\FL-B402-SouthEast"}
+
+
+3{
+Add-Printer -ConnectionName "\\Print server\Floor - Printer
+Add-Printer -ConnectionName "\\Print server\Floor- Printer
+Add-Printer -ConnectionName "\\Print server\Floor- Printer"}
+
+4{
+Add-Printer -ConnectionName "\\Print server\Floor - Printer"
+Add-Printer -ConnectionName "\\Print server\Floor - Printer"
+Add-Printer -ConnectionName "\\Print server\Floor - Printer"}
+
+5{
+Add-Printer -ConnectionName "\\Print server\Floor - Printer"
+Add-Printer -ConnectionName "\\Print server\Floor - Printer"
+Add-Printer -ConnectionName "\\Print server\Floor - Printer"}
+}
+
+##TeamViewer
+
+ Start-process D:\TeamViewer_Corp\TeamViewerCorpSetup_Host.bat -verb RunAs
+
+## Company portal 
+
+winget install "Company Portal" --source msstore
